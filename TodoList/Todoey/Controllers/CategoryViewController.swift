@@ -3,14 +3,14 @@
 //  Todoey
 //
 //  Created by Галина Збитнева on 15.12.2021.
-//  Copyright © 2021 App Brewery. All rights reserved.
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
     
+    let realm = try! Realm()
     var categoryArray = [Category]()
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -19,7 +19,7 @@ class CategoryViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        loadCategories()
+       // loadCategories()
 
     }
 
@@ -47,13 +47,13 @@ class CategoryViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            var categoryForDelete = Category(context: context)
+            var categoryForDelete = Category()
             categoryForDelete = categoryArray[indexPath.row]
-            context.delete(categoryForDelete)
+           
             //нужно удалить  itemэтой категории
             categoryArray.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
-            saveCategory()
+            
         }
     }
    // MARK: - tableView delegate methods
@@ -76,10 +76,10 @@ class CategoryViewController: UITableViewController {
         let alert =  UIAlertController(title: "Новая категория", message: "Укажите имя новой категории", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add", style: .default) { (action) in
             if (textField.text != "" && textField.text != " ") {
-                let newCategory = Category(context: self.context)
-                newCategory.name = textField.text
+                let newCategory = Category()
+                newCategory.name = textField.text!
                 self.categoryArray.append(newCategory)
-                self.saveCategory()
+                self.saveCategory(category: newCategory)
             }
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -95,23 +95,25 @@ class CategoryViewController: UITableViewController {
     
    
     
-    func saveCategory(){
+    func saveCategory(category: Category){
         do {
-            try context.save()
+            try realm.write({
+                realm.add(category)
+            })
         } catch {
             print ("ОШИБКА!!! \(error)")
         }
         self.tableView.reloadData()
     }
    
-    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()){
-        do{
-            categoryArray = try context.fetch(request)
-        } catch {
-            print ("error is \(error)")
-        }
-        tableView.reloadData()
-    }
-   
+//    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()){
+//        do{
+//            categoryArray = try context.fetch(request)
+//        } catch {
+//            print ("error is \(error)")
+//        }
+//        tableView.reloadData()
+//    }
+//
 }
     

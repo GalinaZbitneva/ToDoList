@@ -2,8 +2,6 @@
 //  ViewController.swift
 //  Todoey
 //
-//  Created by Philipp Muellauer on 02/12/2019.
-//  Copyright © 2019 App Brewery. All rights reserved.
 //
 
 import UIKit
@@ -18,7 +16,7 @@ class ToDoListViewController: UITableViewController {
     var selectedCategory: Category? {
         didSet {
             print("items загрузка по категории")
-            loadItems()
+           // loadItems()
         }
     }
     
@@ -82,106 +80,106 @@ class ToDoListViewController: UITableViewController {
         //те снова вызывается метод по созданию ячейки таблицы
        // tableView.reloadData(),   saveItems() уже содержит эту строку
         
-        saveItems()
+        //saveItems()
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            var itemForDelete = Item(context: context)
-            itemForDelete = itemArray[indexPath.row]
-            context.delete(itemForDelete)
-            itemArray.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-            saveItems()
-        }
-    }
-    
+//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+//        if editingStyle == .delete {
+//            var itemForDelete = Item(context: context)
+//            itemForDelete = itemArray[indexPath.row]
+//            context.delete(itemForDelete)
+//            itemArray.remove(at: indexPath.row)
+//            tableView.deleteRows(at: [indexPath], with: .fade)
+//            saveItems()
+//        }
+//    }
+//
     //MARK: - Add new items
     
     @IBAction func addNewTaskButton(_ sender: UIBarButtonItem) {
         var textField = UITextField()
         let alert = UIAlertController(title: "Добавьте новую задачу", message: "", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Добавить", style: .default) { (action) in
-            if (textField.text != " "  && textField.text != nil) {
-                
-                let userItem = Item(context: self.context)
-                userItem.title = textField.text
-                userItem.selection = false
-                userItem.parentCategory = self.selectedCategory
-                
-                self.itemArray.append(userItem)
-                
-                self.saveItems()
-            }
+//        let action = UIAlertAction(title: "Добавить", style: .default) { (action) in
+//            if (textField.text != " "  && textField.text != nil) {
+//
+//                let userItem = Item()
+//                userItem.title = textField.text
+//                userItem.selection = false
+//                userItem.parentCategory = self.selectedCategory
+//
+//                self.itemArray.append(userItem)
+//
+//                self.saveItems()ч
+//            }
         }
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
-        alert.addTextField { (alertTextField) in
-            alertTextField.placeholder = "Новая задача"
-            textField = alertTextField
-        }
-        alert.addAction(action)
-        alert.addAction(cancelAction)
-        present(alert, animated: true, completion: nil)
+//        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+//
+//        alert.addTextField { (alertTextField) in
+//            alertTextField.placeholder = "Новая задача"
+//            textField = alertTextField
+//        }
+//        alert.addAction(action)
+//        alert.addAction(cancelAction)
+//        present(alert, animated: true, completion: nil)
     }
     
 //MARK: - Additional methods
     
-    func saveItems(){
-        do {
-            try context.save()
-        } catch {
-            print ("ОШИБКА!!! \(error)")
-        }
-        self.tableView.reloadData()
-    }
+//    func saveItems(){
+//        do {
+//            try context.save()
+//        } catch {
+//            print ("ОШИБКА!!! \(error)")
+//        }
+//        self.tableView.reloadData()
+//    }
+//
+//    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
+//        //selectedCategory мы получили из segue
+//        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+//        // делаем проверку что входящий предикат не нил. И если он не нил то предикат будет составной из двух
+//        if let additionalPredicate = predicate {
+//            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+//        } else {
+//            request.predicate = categoryPredicate
+//        }
+//
+//        do{
+//            itemArray = try context.fetch(request)
+//        } catch {
+//            print ("error is \(error)")
+//        }
+//        tableView.reloadData()
+//    }
    
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
-        //selectedCategory мы получили из segue
-        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-        // делаем проверку что входящий предикат не нил. И если он не нил то предикат будет составной из двух
-        if let additionalPredicate = predicate {
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
-        } else {
-            request.predicate = categoryPredicate
-        }
-        
-        do{
-            itemArray = try context.fetch(request)
-        } catch {
-            print ("error is \(error)")
-        }
-        tableView.reloadData()
-    }
-   
-}
+//}
 
 //MARK: - Serach bar methods
 
-extension ToDoListViewController: UISearchBarDelegate {
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let searchRequest: NSFetchRequest<Item> = Item.fetchRequest()
-        
-        searchRequest.predicate = NSPredicate(format: "title CONTAINS [cd] %@", searchBar.text!)
-        
-       // let sortDescription = NSSortDescriptor(key: "title", ascending: true)
-        
-        //searchRequest.sortDescriptors = [sortDescription]
-        //две строчки заменили одной
-        searchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        
-        loadItems(with: searchRequest, predicate: searchRequest.predicate)
-    }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchBar.text?.count == 0 {
-            loadItems()
-            DispatchQueue.main.async {
-                searchBar.resignFirstResponder()
-            }
-        }
-    }
-}
+//extension ToDoListViewController: UISearchBarDelegate {
+//
+//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+//        let searchRequest: NSFetchRequest<Item> = Item.fetchRequest()
+//
+//        searchRequest.predicate = NSPredicate(format: "title CONTAINS [cd] %@", searchBar.text!)
+//
+//       // let sortDescription = NSSortDescriptor(key: "title", ascending: true)
+//
+//        //searchRequest.sortDescriptors = [sortDescription]
+//        //две строчки заменили одной
+//        searchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+//
+//        loadItems(with: searchRequest, predicate: searchRequest.predicate)
+//    }
+//
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        if searchBar.text?.count == 0 {
+//            loadItems()
+//            DispatchQueue.main.async {
+//                searchBar.resignFirstResponder()
+//            }
+//        }
+//    }
+//}

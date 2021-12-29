@@ -1,9 +1,6 @@
 //
 //  AppDelegate.swift
-//  Destini
 //
-//  Created by Philipp Muellauer on 01/09/2015.
-//  Copyright (c) 2015 London App Brewery. All rights reserved.
 //
 
 import UIKit
@@ -19,7 +16,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-       
+        
+        print(Realm.Configuration.defaultConfiguration.fileURL)
+        
+        do {
+            let realm = try Realm()
+            
+        } catch {
+           print("ERROR occured with Realm initialisation \(error)")
+        }
+        
         
         return true
     }
