@@ -11,7 +11,7 @@ import RealmSwift
 class CategoryViewController: UITableViewController {
     
     let realm = try! Realm()
-    var categoryArray = [Category]()
+    var categoryArray: Results<Category>?
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
@@ -19,7 +19,7 @@ class CategoryViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-       // loadCategories()
+        loadCategories()
 
     }
 
@@ -27,7 +27,7 @@ class CategoryViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return categoryArray.count
+        return categoryArray?.count ?? 1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -39,19 +39,15 @@ class CategoryViewController: UITableViewController {
             cell = UITableViewCell(style: .default, reuseIdentifier: "CategoryCell")
         }
        
-        let category = categoryArray[indexPath.row]
+        let category = categoryArray?[indexPath.row]
         
-        cell.textLabel?.text = category.name
+        cell.textLabel?.text = category?.name ?? "No categories added"
         return cell
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            var categoryForDelete = Category()
-            categoryForDelete = categoryArray[indexPath.row]
-           
-            //нужно удалить  itemэтой категории
-            categoryArray.remove(at: indexPath.row)
+            var categoryForDelete = categoryArray?[indexPath.row]
             tableView.deleteRows(at: [indexPath], with: .fade)
             
         }
@@ -65,7 +61,7 @@ class CategoryViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! ToDoListViewController
         if let indexPath = tableView.indexPathForSelectedRow {
-            destinationVC.selectedCategory = categoryArray[indexPath.row]
+            destinationVC.selectedCategory = categoryArray?[indexPath.row]
         }
     }
     
@@ -78,7 +74,7 @@ class CategoryViewController: UITableViewController {
             if (textField.text != "" && textField.text != " ") {
                 let newCategory = Category()
                 newCategory.name = textField.text!
-                self.categoryArray.append(newCategory)
+                
                 self.saveCategory(category: newCategory)
             }
         }
@@ -106,14 +102,9 @@ class CategoryViewController: UITableViewController {
         self.tableView.reloadData()
     }
    
-//    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()){
-//        do{
-//            categoryArray = try context.fetch(request)
-//        } catch {
-//            print ("error is \(error)")
-//        }
-//        tableView.reloadData()
-//    }
-//
+    func loadCategories(){
+        categoryArray = realm.objects(Category.self)
+        tableView.reloadData()
+    }
 }
     

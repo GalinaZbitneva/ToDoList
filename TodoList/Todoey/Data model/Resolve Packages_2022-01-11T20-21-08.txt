@@ -1,0 +1,11 @@
+
+Showing All Messages
+
+IQKeyboardManager
+https://github.com/hackiftekhar/IQKeyboardManager: An unknown server error occurred. Make sure a connection is established and the server is accessible.
+
+Fetching from https://github.com/hackiftekhar/IQKeyboardManager (cached)
+Fetching from https://github.com/hackiftekhar/IQKeyboardManager
+
+
+Resolving Package Graph Failed    11.01.2022, 20:21    2.1 seconds
