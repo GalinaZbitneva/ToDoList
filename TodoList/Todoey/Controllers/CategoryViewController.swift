@@ -13,9 +13,7 @@ class CategoryViewController: UITableViewController {
     let realm = try! Realm()
     var categoryArray: Results<Category>?
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
-
+   
     override func viewDidLoad() {
         super.viewDidLoad()
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))

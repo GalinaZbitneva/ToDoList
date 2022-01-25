@@ -3,8 +3,6 @@
 //  Todoey
 //
 //  Created by Галина Збитнева on 29.12.2021.
-//  Copyright © 2021 App Brewery. All rights reserved.
-//
 
 import Foundation
 import RealmSwift

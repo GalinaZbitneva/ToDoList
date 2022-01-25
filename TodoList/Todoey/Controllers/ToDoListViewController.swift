@@ -68,15 +68,25 @@ class ToDoListViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let item = itemArray?[indexPath.row]{
+            do {
+                try realm.write({
+                    item.selection = !item.selection
+                })
+            } catch {
+                print ("Error saving selection status \(error)")
+            }
+        }
+        tableView.reloadData()
         //функция выполняет то,что происходит когла ячейка выбрана
-        print(itemArray?[indexPath.row].title)
+        //print(itemArray?[indexPath.row].title)
         
         // меняем статус элемента при нажатии его ячейки
-        if itemArray?[indexPath.row].selection == false {
-            itemArray?[indexPath.row].selection = true
-        } else {
-            itemArray?[indexPath.row].selection = false
-        }
+        //if itemArray?[indexPath.row].selection == false {
+       //     itemArray?[indexPath.row].selection = true
+//        } else {
+//            itemArray?[indexPath.row].selection = false
+//        }
         //необходимо обновлять таблицу, чтобы обновить значение selection у выбранных items
         //те снова вызывается метод по созданию ячейки таблицы
        // tableView.reloadData(),   saveItems() уже содержит эту строку
@@ -86,17 +96,21 @@ class ToDoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//        if editingStyle == .delete {
-//            var itemForDelete = Item(context: context)
-//            itemForDelete = itemArray[indexPath.row]
-//            context.delete(itemForDelete)
-//            itemArray.remove(at: indexPath.row)
-//            tableView.deleteRows(at: [indexPath], with: .fade)
-//            saveItems()
-//        }
-//    }
-//
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            if let itemForDelete = itemArray?[indexPath.row]{
+                do{
+                    try realm.write({
+                        realm.delete(itemForDelete)
+                    })
+                } catch {
+                    print("Can't delete the item \(error)")
+                }
+                tableView.reloadData()
+            }
+        }
+    }
+
     //MARK: - Add new items
     
     @IBAction func addNewTaskButton(_ sender: UIBarButtonItem) {
@@ -110,6 +124,7 @@ class ToDoListViewController: UITableViewController {
                         try self.realm.write({
                             let userItem = Item()
                             userItem.title = textField.text!
+                            userItem.dataCreated = Date()
                             currentCategory.items.append(userItem)
                         })
                     } catch {
@@ -133,10 +148,10 @@ class ToDoListViewController: UITableViewController {
         
     
     func loadItems(){
-        itemArray = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+        itemArray = selectedCategory?.items.sorted(byKeyPath: "dataCreated", ascending: true)
         tableView.reloadData()
     }
-    
+}
     
     
 //MARK: - Additional methods
@@ -172,28 +187,20 @@ class ToDoListViewController: UITableViewController {
 
 //MARK: - Serach bar methods
 
-//extension ToDoListViewController: UISearchBarDelegate {
-//
-//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        let searchRequest: NSFetchRequest<Item> = Item.fetchRequest()
-//
-//        searchRequest.predicate = NSPredicate(format: "title CONTAINS [cd] %@", searchBar.text!)
-//
-//       // let sortDescription = NSSortDescriptor(key: "title", ascending: true)
-//
-//        //searchRequest.sortDescriptors = [sortDescription]
-//        //две строчки заменили одной
-//        searchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-//
-//        loadItems(with: searchRequest, predicate: searchRequest.predicate)
-//    }
-//
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        if searchBar.text?.count == 0 {
-//            loadItems()
-//            DispatchQueue.main.async {
-//                searchBar.resignFirstResponder()
-//            }
-//        }
-//    }
+extension ToDoListViewController: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        itemArray = itemArray?.filter("title CONTAINS [cd] %@", searchBar.text!).sorted(byKeyPath: "title", ascending: true)
+        
+        tableView.reloadData()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
 }
