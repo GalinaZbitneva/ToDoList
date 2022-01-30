@@ -7,7 +7,7 @@
 import UIKit
 import RealmSwift
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController: SwipeTableViewController {
     
     var itemArray: Results<Item>?
     let realm = try! Realm()
@@ -25,6 +25,7 @@ class ToDoListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.rowHeight = 80.0
         
         //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
     
@@ -38,16 +39,7 @@ class ToDoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        var cell: UITableViewCell
-        
-        if let reusecell = tableView.dequeueReusableCell(withIdentifier: "TodoItemCell") {
-            //переиспользуем ячейку
-            cell = reusecell
-        } else {
-            //создаем новую ячейку
-            cell = UITableViewCell(style: .default, reuseIdentifier: "TodoItemCell")
-        }
-        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         if let item = itemArray?[indexPath.row] {
             cell.textLabel?.text = item.title
            
@@ -96,21 +88,19 @@ class ToDoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            if let itemForDelete = itemArray?[indexPath.row]{
-                do{
-                    try realm.write({
-                        realm.delete(itemForDelete)
-                    })
-                } catch {
-                    print("Can't delete the item \(error)")
-                }
-                tableView.reloadData()
+    override func updateData(at indexPath: IndexPath) {
+        if let itemForDelete = itemArray?[indexPath.row]{
+            do{
+                try realm.write({
+                    realm.delete(itemForDelete)
+                })
+            } catch {
+                print("Can't delete the item \(error)")
             }
+            tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
-
+    
     //MARK: - Add new items
     
     @IBAction func addNewTaskButton(_ sender: UIBarButtonItem) {
