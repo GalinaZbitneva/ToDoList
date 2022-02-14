@@ -9,6 +9,7 @@ import RealmSwift
 
 class Category: Object {
     @Persisted  var name: String = ""
+    @Persisted  var color: String = ""
     //укажем тип взаимосвязи между Item и Category
     //эта связь -  список из элементов типа Item
     @Persisted  var items = List<Item>()

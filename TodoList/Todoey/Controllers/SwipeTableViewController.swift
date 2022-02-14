@@ -40,7 +40,8 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
     }
     
     func updateData(at indexPath: IndexPath){
-       //в каждом контроллере вызывается как override func updateData 
+       //в каждом контроллере вызывается как override func updateData
+       //в каждом контроллере будет свой код как раз и описывающий удаление ячеек
     }
 
 }

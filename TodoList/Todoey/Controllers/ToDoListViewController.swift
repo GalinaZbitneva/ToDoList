@@ -6,6 +6,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class ToDoListViewController: SwipeTableViewController {
     
@@ -23,12 +24,32 @@ class ToDoListViewController: SwipeTableViewController {
     
     @IBOutlet weak var searchBar: UISearchBar!
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.rowHeight = 80.0
         
+        
         //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
     
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        navigationItem.title = selectedCategory?.name
+        
+        if let colorHex = UIColor(hexString: selectedCategory?.color){
+            guard let navBar = navigationController?.navigationBar else {
+                fatalError("navigationController doesn't exist")
+            }
+            //navBar.backgroundColor = colorHex
+            navBar.scrollEdgeAppearance?.backgroundColor = colorHex
+            navBar.tintColor = ContrastColorOf(backgroundColor: colorHex, returnFlat: true)
+            navBar.barTintColor = colorHex
+            navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(backgroundColor: colorHex, returnFlat: true)]
+            searchBar.barTintColor = colorHex
+            
+        }
     }
     
     //MARK: - Table view Delegate method
@@ -42,7 +63,12 @@ class ToDoListViewController: SwipeTableViewController {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         if let item = itemArray?[indexPath.row] {
             cell.textLabel?.text = item.title
-           
+            //cell.backgroundColor = UIColor(hexString: selectedCategory?.color)
+            if let color = UIColor(hexString: selectedCategory?.color).darken(byPercentage: CGFloat(Double(indexPath.row) / Double(itemArray!.count)) - 0.2){
+                cell.backgroundColor = color
+                cell.textLabel?.textColor = ContrastColorOf(backgroundColor: color, returnFlat: true)
+            }
+
             if item.selection == true {
                 cell.accessoryType = .checkmark
             } else {
@@ -64,7 +90,7 @@ class ToDoListViewController: SwipeTableViewController {
             do {
                 try realm.write({
                     item.selection = !item.selection
-                })
+                }) 
             } catch {
                 print ("Error saving selection status \(error)")
             }

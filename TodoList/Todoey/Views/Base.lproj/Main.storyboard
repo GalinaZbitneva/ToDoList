@@ -44,14 +44,13 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Items" id="sHg-ty-iI1">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="KEv-7P-MPg">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
                                 <action selector="addNewTaskButton:" destination="yZi-lJ-jYi" id="TKZ-ui-Njc"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="searchBar" destination="9yV-Vh-LQk" id="yBt-xs-9eG"/>
+                        <outlet property="searchBar" destination="9yV-Vh-LQk" id="tkx-jx-qOh"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PYf-LJ-GZS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -63,8 +62,8 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="M4a-V1-rVs" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="MTQ-mO-Nbh">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="MTQ-mO-Nbh">
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" red="0.41161810539999999" green="0.41143799920000002" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -76,8 +75,11 @@
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </textAttributes>
                         <navigationBarAppearance key="scrollEdgeAppearance">
-                            <color key="backgroundColor" red="0.41161810539999999" green="0.41143799920000002" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                            <color key="backgroundColor" red="0.36862745098039218" green="0.42352941176470588" blue="0.96470588235294119" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             <textAttributes key="titleTextAttributes">
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </textAttributes>
+                            <textAttributes key="largeTitleTextAttributes">
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </textAttributes>
                         </navigationBarAppearance>

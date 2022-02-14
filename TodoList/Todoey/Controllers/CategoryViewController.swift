@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 
 class CategoryViewController: SwipeTableViewController {
@@ -22,6 +23,14 @@ class CategoryViewController: SwipeTableViewController {
         tableView.rowHeight = 80.0
 
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        guard let navBar = navigationController?.navigationBar else {
+            fatalError("Nav controller doesn't exist")
+        }
+        navBar.scrollEdgeAppearance?.backgroundColor = UIColor(hexString: "5E6CF6")
+    }
+    
 
     // MARK: - Table view data source
 
@@ -36,6 +45,13 @@ class CategoryViewController: SwipeTableViewController {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         let category = categoryArray?[indexPath.row]
         cell.textLabel?.text = category?.name ?? "No categories added"
+        
+        guard let cellColor = UIColor(hexString: category?.color ?? "5E6CF6") else {
+            fatalError("Can't find a color")
+        }
+        cell.backgroundColor = cellColor
+        cell.textLabel?.textColor = ContrastColorOf(backgroundColor: cellColor, returnFlat: true)
+        //hex код цвета можно увидеть если навести пипетку на цвет на сториборде
         return cell
     }
     
@@ -50,6 +66,7 @@ class CategoryViewController: SwipeTableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "showItems", sender: self)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -68,6 +85,7 @@ class CategoryViewController: SwipeTableViewController {
             if (textField.text != "" && textField.text != " ") {
                 let newCategory = Category()
                 newCategory.name = textField.text!
+                newCategory.color = RandomFlatColor().hexValue()
                 
                 self.saveCategory(category: newCategory)
             }
